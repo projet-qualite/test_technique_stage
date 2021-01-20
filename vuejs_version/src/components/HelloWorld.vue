@@ -1,151 +1,287 @@
 <template>
   <v-container>
-    <v-row class="text-center">
-      <v-col cols="12">
-        <v-img
-          :src="require('../assets/logo.svg')"
-          class="my-3"
-          contain
-          height="200"
-        />
-      </v-col>
 
-      <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to Vuetify
-        </h1>
-
-        <p class="subheading font-weight-regular">
-          For help and collaboration with other Vuetify developers,
-          <br>please join our online
-          <a
-            href="https://community.vuetifyjs.com"
-            target="_blank"
-          >Discord Community</a>
-        </p>
-      </v-col>
-
-      <v-col
-        class="mb-5"
-        cols="12"
+    <v-layout row
       >
-        <h2 class="headline font-weight-bold mb-3">
-          What's next?
-        </h2>
+          
 
-        <v-row justify="center">
-          <a
-            v-for="(next, i) in whatsNext"
-            :key="i"
-            :href="next.href"
-            class="subheading mx-3"
-            target="_blank"
+
+          <v-flex xs12 md12 sm12 lg3>
+
+          <div class="grey lighten-5 mt-8">
+            <v-col>
+              <h1 hidden>{{nb}}</h1>
+
+              <h1>Recherche</h1>
+              <v-text-field
+              class="sm-12"
+                  solo
+                  v-model="search"
+                  label="Rechercher..."
+                  append-icon="mdi-magnify"
+                ></v-text-field>
+
+                <h1>Filtre</h1>
+              <v-select
+                label="Marque"
+                :items="list_marque"
+                v-model="marque"
+                dense
+                outlined
+              ></v-select>
+
+              <v-select
+                label="Usine de production"
+                :items="list_usine"
+                v-model="marque"
+                dense
+                outlined
+              ></v-select>
+
+            
+
+            
+
+
+
+            <v-btn
+            class="center"
+            depressed
+            color="error"
+            @click="reinitialiser()"
           >
-            {{ next.text }}
-          </a>
-        </v-row>
-      </v-col>
+            Reinitialiser
+          </v-btn>
+              
 
-      <v-col
-        class="mb-5"
-        cols="12"
-      >
-        <h2 class="headline font-weight-bold mb-3">
-          Important Links
-        </h2>
+            </v-col>
+            </div>
 
-        <v-row justify="center">
-          <a
-            v-for="(link, i) in importantLinks"
-            :key="i"
-            :href="link.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ link.text }}
-          </a>
-        </v-row>
-      </v-col>
+          </v-flex>
 
-      <v-col
-        class="mb-5"
-        cols="12"
-      >
-        <h2 class="headline font-weight-bold mb-3">
-          Ecosystem
-        </h2>
 
-        <v-row justify="center">
-          <a
-            v-for="(eco, i) in ecosystem"
-            :key="i"
-            :href="eco.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ eco.text }}
-          </a>
-        </v-row>
-      </v-col>
-    </v-row>
+        <v-flex xs12 md12 sm12 lg9 class="justify-center">
+
+          <v-row>
+            <div v-for="(item, i) in filtreVoiture" :key="item._name">
+              <v-card
+              flat
+              outlined
+              class="md-3 mr-5 ml-5 mt-8"
+              max-width="250"
+            >
+              <v-img
+                :src="item.img"
+                height="150"
+              ></v-img>
+
+              <v-card-title>
+                {{item._name}}
+              </v-card-title>
+
+              <v-card-subtitle>
+                {{item._classe}}
+              </v-card-subtitle>
+
+              <v-card-actions>
+                <v-btn
+                  color="orange lighten-2"
+                  depressed
+                >
+                  Détails
+                </v-btn>
+
+                <v-spacer></v-spacer>
+
+                <v-btn
+                  icon
+                  @click="changer(i)"
+                >
+               
+                  <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                </v-btn>
+              </v-card-actions>
+
+              <v-expand-transition>
+                <div v-show="show[i]">
+                  <v-divider></v-divider>
+
+                  <v-card-text>
+                    {{item._description}}
+                  </v-card-text>
+                </div>
+              </v-expand-transition>
+      </v-card>
+     
+
+          </div>
+          </v-row>
+
+
+        </v-flex>
+
+        
+
+
+    </v-layout>
+    
+
+   
+
+    
+
+    
   </v-container>
 </template>
 
 <script>
+import Voiture from '../classes/Voiture';
+import axios from 'axios'
+
   export default {
     name: 'HelloWorld',
 
     data: () => ({
-      ecosystem: [
+      search: '',
+      valeur : 0,
+      voiture: Voiture,
+      list_voitures: [],
+      list_marque: [],
+      list_usine: [],
+      marque: '',
+      usine: '',
+      pagination: {},
+      nb: 0,
+      show: [],   
+      jsonfile: [],
+      nombre_page: 0, 
+      
+      }
+    ),
+
+    created () {
+      this.nombre_pageF();
+
+      //const headers = { 'Access-Control-Allow-Origin': '*'};
+      this.chargerVoitures();
+
+
+      axios.get("/b/0K8O").then(response => {
+        console.log("+++ SUCCESS+++");
+        console.log(response);
+        this.jsonfile = response.data
+        this.chargerVoitures()
+      }).catch(()=>{
+        console.log("---ERREUR----")
+      })
+      
+    
+  },
+
+  computed: {
+    pages () {
+      return this.pagination.rowsPerPage ? Math.ceil(this.list_voitures.length / this.pagination.rowsPerPage) : 0
+    },
+
+    filtreVoiture()
+    {
+      return this.list_voitures.filter((voiture)=>{
+        return voiture._name.toLowerCase().match(this.search) && voiture._marque.match(this.marque);
+      })
+    },
+
+    
+  },
+
+    methods:{
+
+      nombre_pageF()
+      {
+        let p = this.list_voitures.length;
+        this.nombre_page = Math.ceil (p / 6);
+      },
+
+      changer(i)
+      {
+        if(this.show[i])
         {
-          text: 'vuetify-loader',
-          href: 'https://github.com/vuetifyjs/vuetify-loader',
-        },
+          this.show[i] = false;
+        }
+
+        else{
+          this.show[i] = true;
+        }
+
+        
+        this.nb++;
+       
+      },
+
+      chargerVoitures()
+      {
+        for(let i = 0; i<this.jsonfile.length; i++)
         {
-          text: 'github',
-          href: 'https://github.com/vuetifyjs/vuetify',
-        },
-        {
-          text: 'awesome-vuetify',
-          href: 'https://github.com/vuetifyjs/awesome-vuetify',
-        },
-      ],
-      importantLinks: [
-        {
-          text: 'Documentation',
-          href: 'https://vuetifyjs.com',
-        },
-        {
-          text: 'Chat',
-          href: 'https://community.vuetifyjs.com',
-        },
-        {
-          text: 'Made with Vuetify',
-          href: 'https://madewithvuejs.com/vuetify',
-        },
-        {
-          text: 'Twitter',
-          href: 'https://twitter.com/vuetifyjs',
-        },
-        {
-          text: 'Articles',
-          href: 'https://medium.com/vuetify',
-        },
-      ],
-      whatsNext: [
-        {
-          text: 'Explore components',
-          href: 'https://vuetifyjs.com/components/api-explorer',
-        },
-        {
-          text: 'Select a layout',
-          href: 'https://vuetifyjs.com/getting-started/pre-made-layouts',
-        },
-        {
-          text: 'Frequently Asked Questions',
-          href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-        },
-      ],
-    }),
+          this.show.push(false);
+          
+          this.list_voitures.push(
+            new Voiture(
+              this.jsonfile[i]["name"],
+              this.jsonfile[i]["description"],
+              this.jsonfile[i]["img"] ,
+              this.jsonfile[i]["marque"],
+              this.jsonfile[i]["annees-de-production"],
+              this.jsonfile[i].production,
+              this.jsonfile[i].classe,
+              this.jsonfile[i]["usine-s-dassemblage"],
+              this.jsonfile[i].energie,
+              this.jsonfile[i]["moteur-s"],
+              this.jsonfile[i]["position-du-moteur"],
+              this.jsonfile[i].cylindree,
+              this.jsonfile[i]["puissance-maximale"],
+              this.jsonfile[i]["couple-maximal"],
+              this.jsonfile[i].transmission,
+              this.jsonfile[i]["boite-de-vitesses"],
+              this.jsonfile[i]["poids-a-vide"],
+              this.jsonfile[i]["vitesse-maximale"],
+              this.jsonfile[i].acceleration,
+              this.jsonfile[i]["consommation-mixte"],
+              this.jsonfile[i]["emission-de-co2"],
+              this.jsonfile[i]["carrosserie-s"],
+              this.jsonfile[i].longueur,
+              this.jsonfile[i].hauteur,
+              this.jsonfile[i].largeur,
+              this.jsonfile[i].empattement,
+              this.jsonfile[i]["coefficient-de-trainee"],
+              this.jsonfile[i].chassis,
+              this.jsonfile[i]["plate-forme"],
+              this.jsonfile[i].suspensions,
+              this.jsonfile[i].direction,
+              this.jsonfile[i].freins
+
+            )
+          )
+          this.list_marque.push(this.jsonfile[i]["marque"])
+          if(this.jsonfile[i]["usine-s-dassemblage"] != null)
+          {
+            this.list_usine.push(this.jsonfile[i]["usine-s-dassemblage"])
+          }
+          
+        }
+        Array.from(new Set(this.list_marque))
+        Array.from(new Set(this.list_usine))
+
+      },
+      reinitialiser()
+    {
+      this.marque = ''
+      this.search = ''
+      this.usine = ''
+    }
+
+      
+
+    },
+
+    
   }
 </script>
