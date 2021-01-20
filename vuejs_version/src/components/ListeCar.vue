@@ -84,12 +84,20 @@
               </v-card-subtitle>
 
               <v-card-actions>
-                <v-btn
-                  color="orange lighten-2"
-                  depressed
-                >
-                  Détails
-                </v-btn>
+                <router-link :to="{ name: 'Page2', params: { id: 1234 }, query: { debug: true }}">
+                 
+                  </router-link>
+                <router-link
+                :to="{ name: 'Detail', params: {voiture: item}}">
+
+                  <v-btn
+                    color="orange lighten-2"
+                    depressed
+                  >
+                    Détails
+                  </v-btn>
+                </router-link>
+                
 
                 <v-spacer></v-spacer>
 
@@ -139,7 +147,7 @@ import Voiture from '../classes/Voiture';
 import axios from 'axios'
 
   export default {
-    name: 'ListCar',
+    name: 'ListeCar',
 
     data: () => ({
       search: '', // Contient la valeur de la recherche pour trier la liste
