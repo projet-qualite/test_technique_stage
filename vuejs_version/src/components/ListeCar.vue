@@ -139,22 +139,19 @@ import Voiture from '../classes/Voiture';
 import axios from 'axios'
 
   export default {
-    name: 'HelloWorld',
+    name: 'ListCar',
 
     data: () => ({
-      search: '',
-      valeur : 0,
-      voiture: Voiture,
-      list_voitures: [],
-      list_marque: [],
-      list_usine: [],
-      marque: '',
-      usine: '',
+      search: '', // Contient la valeur de la recherche pour trier la liste
+      list_voitures: [], // liste des voitures
+      list_marque: [], // liste des marques des voitures
+      list_usine: [], // liste des usines de fabrication des voitures
+      marque: '', // marque selectionné
+      usine: '', // usine sélectionné
       pagination: {},
       nb: 0,
-      show: [],   
-      jsonfile: [],
-      nombre_page: 0, 
+      show: [],   // tableau qui va contenir un booléen pour chaque voiture pour afficher ou non la description
+      jsonfile: [], // tableau du fichier json de l'api
       
       }
     ),
@@ -166,6 +163,7 @@ import axios from 'axios'
       this.chargerVoitures();
 
 
+      // Appel de l'api
       axios.get("/b/0K8O").then(response => {
         console.log("+++ SUCCESS+++");
         console.log(response);
@@ -183,6 +181,7 @@ import axios from 'axios'
       return this.pagination.rowsPerPage ? Math.ceil(this.list_voitures.length / this.pagination.rowsPerPage) : 0
     },
 
+    // fonction permettant de filtrer la liste des voitures
     filtreVoiture()
     {
       return this.list_voitures.filter((voiture)=>{
@@ -201,6 +200,7 @@ import axios from 'axios'
         this.nombre_page = Math.ceil (p / 6);
       },
 
+      // méthode pour afficher ou non la description
       changer(i)
       {
         if(this.show[i])
@@ -217,11 +217,13 @@ import axios from 'axios'
        
       },
 
+      // methode pour initialiser les listes des voitures, des marques et des usines
       chargerVoitures()
       {
         for(let i = 0; i<this.jsonfile.length; i++)
         {
-          this.show.push(false);
+          this.show.push(false); // initialement on ne peut pas afficher les description des voitures donc elles sont toutes à false
+          
           
           this.list_voitures.push(
             new Voiture(
@@ -261,16 +263,19 @@ import axios from 'axios'
             )
           )
           this.list_marque.push(this.jsonfile[i]["marque"])
-          if(this.jsonfile[i]["usine-s-dassemblage"] != null)
+          if(this.jsonfile[i]["usine-s-dassemblage"] != null) //pour certaines voitures l'usine de fabrication n'est pas mentionnée, donc la condition est mis pour eviter d'avoir des valleurs null dans le tableau
           {
             this.list_usine.push(this.jsonfile[i]["usine-s-dassemblage"])
           }
           
         }
-        Array.from(new Set(this.list_marque))
-        Array.from(new Set(this.list_usine))
+        
+        Array.from(new Set(this.list_marque)) // utilisé pour éviter les doublons
+        Array.from(new Set(this.list_usine))  // utilisé pour éviter les doublons
 
       },
+
+      //Méthode réinitialise les filtres
       reinitialiser()
     {
       this.marque = ''

@@ -1,5 +1,5 @@
 
-
+// Classe voiture qui sera manipuler après avoir chargé le JSON
 export default class Voiture
 {
 
