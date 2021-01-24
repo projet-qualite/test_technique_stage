@@ -5,7 +5,7 @@
       >
           
 
-
+          
           <v-flex xs12 md12 sm12 lg3>
 
           <div class="grey lighten-5 mt-8">
@@ -48,6 +48,120 @@
           </v-flex>
 
 
+        <v-flex xs12 md12 sm12 lg9 class="justify-center">
+
+          <v-tabs
+          class="mt-8"
+            v-model="tab"
+            background-color="deep-blue accent-4"
+            centered
+            dark
+            show-arrows
+          >
+            <v-tabs-slider color="teal lighten-3"></v-tabs-slider>
+
+            <v-tab
+              v-for="index in Math.ceil(filtreVoiture.length/6)"
+              :key="index"
+              :href="'#tab-' + index"
+            >
+               {{ index }}
+            </v-tab>
+          </v-tabs>
+
+          <!--{{filtreVoiture}}-->
+
+          
+        
+          <div v-for="index2 in Math.ceil(filtreVoiture.length/6)"
+              :key="index2">
+              
+              <v-tabs-items v-model="tab">
+                <v-row>
+                <div v-for="(n,index3) in 6" :key="index3">
+                  <v-tab-item :value="'tab-'+index2" >
+                    <!--
+                    <h1 v-if="(index3+(index2-1)*6)<=list_voitures.length-1">
+                      {{index3+(index2-1)*6}}
+                    </h1>-->
+                    
+                   
+                          <v-card
+
+                          v-if="(index3+(index2-1)*6)<=filtreVoiture.length-1"
+                            flat
+                            outlined
+                            class=" mr-5 ml-5 mt-8"
+                            max-width="250"
+                          >
+                            <v-img
+                              :src="filtreVoiture[index3+(index2-1)*6].img"
+                              height="150"
+                            ></v-img>
+                            
+
+                            <v-card-title>
+                              {{filtreVoiture[index3+(index2-1)*6]._name}}
+                            </v-card-title>
+
+                            <v-card-subtitle>
+                              {{filtreVoiture[index3+(index2-1)*6]._classe}}
+                            </v-card-subtitle>
+
+                            <v-card-actions>
+                              
+                              <router-link
+                              :to="{ name: 'Detail', params: {voiture: filtreVoiture[index3+(index2-1)*6]}}">
+
+                                <v-btn
+                                  color="orange lighten-2"
+                                  depressed
+                                >
+                                  Détails
+                                </v-btn>
+                              </router-link>
+                              
+
+                              <v-spacer></v-spacer>
+
+                              <v-btn
+                                icon
+                                @click="changer(index3+(index2-1)*6)"
+                              >
+                            
+                                <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                              </v-btn>
+                            </v-card-actions>
+
+                            <v-expand-transition>
+                              <div v-show="show[index3+(index2-1)*6]">
+                                <v-divider></v-divider>
+
+                                <v-card-text>
+                                  {{filtreVoiture[index3+(index2-1)*6]._description}}
+                                </v-card-text>
+                              </div>
+                            </v-expand-transition>
+                    </v-card>
+                    
+                  
+
+                    
+                  </v-tab-item>
+                </div>
+                </v-row>
+                  
+          </v-tabs-items>
+          
+              
+
+          </div>
+          
+
+        </v-flex>
+        
+
+<!--
         <v-flex xs12 md12 sm12 lg9 class="justify-center">
 
           <v-row>
@@ -114,7 +228,7 @@
 
         </v-flex>
 
-        
+        -->
 
 
     </v-layout>
@@ -141,6 +255,7 @@ import axios from 'axios'
       list_marque: [], // liste des marques des voitures
       list_usine: [], // liste des usines de fabrication des voitures
       marque: '', // marque selectionné
+      tab: null,
       pagination: {},
       nb: 0,
       show: [],   // tableau qui va contenir un booléen pour chaque voiture pour afficher ou non la description
@@ -168,6 +283,7 @@ import axios from 'axios'
     
   },
 
+
   computed: {
     pages () {
       return this.pagination.rowsPerPage ? Math.ceil(this.list_voitures.length / this.pagination.rowsPerPage) : 0
@@ -176,10 +292,14 @@ import axios from 'axios'
     // fonction permettant de filtrer la liste des voitures
     filtreVoiture()
     {
+      console.log("test")
       return this.list_voitures.filter((voiture)=>{
+         console.log(voiture._name.toLowerCase().match(this.search) && voiture._marque.match(this.marque));
         return voiture._name.toLowerCase().match(this.search) && voiture._marque.match(this.marque);
       })
     },
+
+    
 
     
   },
@@ -210,7 +330,6 @@ import axios from 'axios'
         for(let i = 0; i<this.jsonfile.length; i++)
         {
           this.show.push(false); // initialement on ne peut pas afficher les description des voitures donc elles sont toutes à false
-          
           
           this.list_voitures.push(
             new Voiture(
