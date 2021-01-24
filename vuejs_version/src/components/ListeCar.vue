@@ -30,19 +30,7 @@
                 outlined
               ></v-select>
 
-              <v-select
-                label="Usine de production"
-                :items="list_usine"
-                v-model="marque"
-                dense
-                outlined
-              ></v-select>
-
-            
-
-            
-
-
+             
 
             <v-btn
             class="center"
@@ -84,9 +72,7 @@
               </v-card-subtitle>
 
               <v-card-actions>
-                <router-link :to="{ name: 'Page2', params: { id: 1234 }, query: { debug: true }}">
                  
-                  </router-link>
                 <router-link
                 :to="{ name: 'Detail', params: {voiture: item}}">
 
@@ -155,7 +141,6 @@ import axios from 'axios'
       list_marque: [], // liste des marques des voitures
       list_usine: [], // liste des usines de fabrication des voitures
       marque: '', // marque selectionné
-      usine: '', // usine sélectionné
       pagination: {},
       nb: 0,
       show: [],   // tableau qui va contenir un booléen pour chaque voiture pour afficher ou non la description
@@ -165,7 +150,6 @@ import axios from 'axios'
     ),
 
     created () {
-      this.nombre_pageF();
 
       //const headers = { 'Access-Control-Allow-Origin': '*'};
       this.chargerVoitures();
@@ -202,11 +186,6 @@ import axios from 'axios'
 
     methods:{
 
-      nombre_pageF()
-      {
-        let p = this.list_voitures.length;
-        this.nombre_page = Math.ceil (p / 6);
-      },
 
       // méthode pour afficher ou non la description
       changer(i)
