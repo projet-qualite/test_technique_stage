@@ -81,6 +81,10 @@
 
             <v-card-text class="text--primary">
               <v-card flat>
+
+                <!-- 
+                  Création de tabs pour le détail
+                -->
                 
 
                   <v-tabs
@@ -171,7 +175,7 @@
 
 
                 
-                  </v-tabs-items>
+                </v-tabs-items>
               </v-card>
             </v-card-text>
 

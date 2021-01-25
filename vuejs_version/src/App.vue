@@ -7,7 +7,7 @@
     >
       <div class="d-flex align-center">
         <v-btn
-        href="https://www.frymarshall.com"
+        href=""
         target="_blank"
         text
       >

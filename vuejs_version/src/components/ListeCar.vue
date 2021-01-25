@@ -5,7 +5,9 @@
       >
           
 
-          
+          <!-- 
+            Partie des filtres
+           -->
           <v-flex xs12 md12 sm12 lg3>
 
           <div class="grey lighten-5 mt-8">
@@ -31,7 +33,9 @@
               ></v-select>
 
              
-
+            <!-- 
+            On clique sur le bouton réinitialiser pour réinitialiser les filtres
+           -->
             <v-btn
             class="center"
             depressed
@@ -47,8 +51,15 @@
 
           </v-flex>
 
-
+        <!-- 
+            Affichage des voitures
+           -->
         <v-flex xs12 md12 sm12 lg9 class="justify-center">
+
+
+          <!-- 
+            Création de tabs pour la pagination
+           -->
 
           <v-tabs
           class="mt-8"
@@ -60,6 +71,11 @@
           >
             <v-tabs-slider color="teal lighten-3"></v-tabs-slider>
 
+            <!-- 
+            On affiche 6 voitures par page
+            On divise donc le nombre de voitures total renvoyé par l'api par 6 et on prends sa borne supérieure
+           -->
+
             <v-tab
               v-for="index in Math.ceil(filtreVoiture.length/6)"
               :key="index"
@@ -69,10 +85,11 @@
             </v-tab>
           </v-tabs>
 
-          <!--{{filtreVoiture}}-->
 
-          
-        
+          <!-- 
+            On fait un parcours du tableau des voitures en créant les items
+
+           -->
           <div v-for="index2 in Math.ceil(filtreVoiture.length/6)"
               :key="index2">
               
@@ -80,10 +97,6 @@
                 <v-row>
                 <div v-for="(n,index3) in 6" :key="index3">
                   <v-tab-item :value="'tab-'+index2" >
-                    <!--
-                    <h1 v-if="(index3+(index2-1)*6)<=list_voitures.length-1">
-                      {{index3+(index2-1)*6}}
-                    </h1>-->
                     
                    
                           <v-card
@@ -109,7 +122,9 @@
                             </v-card-subtitle>
 
                             <v-card-actions>
-                              
+                              <!-- 
+                                Redirection sur la page Détail pour afficher le détail
+                              -->
                               <router-link
                               :to="{ name: 'Detail', params: {voiture: filtreVoiture[index3+(index2-1)*6]}}">
 
@@ -124,9 +139,13 @@
 
                               <v-spacer></v-spacer>
 
+
+                              <!-- 
+                                Sert à afficher la description
+                              -->
                               <v-btn
                                 icon
-                                @click="changer(index3+(index2-1)*6)"
+                                @click="description(index3+(index2-1)*6)"
                               >
                             
                                 <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -161,74 +180,7 @@
         </v-flex>
         
 
-<!--
-        <v-flex xs12 md12 sm12 lg9 class="justify-center">
 
-          <v-row>
-            <div v-for="(item, i) in filtreVoiture" :key="item._name">
-              <v-card
-              flat
-              outlined
-              class="md-3 mr-5 ml-5 mt-8"
-              max-width="250"
-            >
-              <v-img
-                :src="item.img"
-                height="150"
-              ></v-img>
-
-              <v-card-title>
-                {{item._name}}
-              </v-card-title>
-
-              <v-card-subtitle>
-                {{item._classe}}
-              </v-card-subtitle>
-
-              <v-card-actions>
-                 
-                <router-link
-                :to="{ name: 'Detail', params: {voiture: item}}">
-
-                  <v-btn
-                    color="orange lighten-2"
-                    depressed
-                  >
-                    Détails
-                  </v-btn>
-                </router-link>
-                
-
-                <v-spacer></v-spacer>
-
-                <v-btn
-                  icon
-                  @click="changer(i)"
-                >
-               
-                  <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-                </v-btn>
-              </v-card-actions>
-
-              <v-expand-transition>
-                <div v-show="show[i]">
-                  <v-divider></v-divider>
-
-                  <v-card-text>
-                    {{item._description}}
-                  </v-card-text>
-                </div>
-              </v-expand-transition>
-      </v-card>
-     
-
-          </div>
-          </v-row>
-
-
-        </v-flex>
-
-        -->
 
 
     </v-layout>
@@ -271,6 +223,7 @@ import axios from 'axios'
 
 
       // Appel de l'api
+      // Dans le fichier racine vue.config.js il y a le proxy https://jsonkeeper.com
       axios.get("/b/0K8O").then(response => {
         console.log("+++ SUCCESS+++");
         console.log(response);
@@ -294,7 +247,6 @@ import axios from 'axios'
     {
       console.log("test")
       return this.list_voitures.filter((voiture)=>{
-         console.log(voiture._name.toLowerCase().match(this.search) && voiture._marque.match(this.marque));
         return voiture._name.toLowerCase().match(this.search) && voiture._marque.match(this.marque);
       })
     },
@@ -308,7 +260,7 @@ import axios from 'axios'
 
 
       // méthode pour afficher ou non la description
-      changer(i)
+      description(i)
       {
         if(this.show[i])
         {
