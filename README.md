@@ -22,7 +22,7 @@ Vous pourrez voir le rendu via le lien :https://portfoliofry.000webhostapp.com
 
 <td align="center" valign="middle">
 
-<a href="https://insomnia.rest/" target="_blank">
+<a href="https://cli.vuejs.org" target="_blank">
 
 <img width="100px" src="https://router.vuejs.org/logo.png">
 
@@ -32,7 +32,7 @@ Vous pourrez voir le rendu via le lien :https://portfoliofry.000webhostapp.com
 
 <td align="center" valign="middle">
 
-<a href="https://vuejs.org/" target="_blank">
+<a href="https://vuetifyjs.com/en/" target="_blank">
 
 <img width="148px" src="https://cdn.vuetifyjs.com/docs/images/logos/vuetify-logo-light-atom.svg">
 
@@ -41,7 +41,7 @@ Vous pourrez voir le rendu via le lien :https://portfoliofry.000webhostapp.com
 
 </td>
 
-<a href="https://vuejs.org/" target="_blank">
+<a href="https://www.npmjs.com" target="_blank">
 <img width="148px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Npm-logo.svg/1200px-Npm-logo.svg.png">
 
 </a>
